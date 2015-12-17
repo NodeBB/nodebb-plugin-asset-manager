@@ -7,6 +7,7 @@ var path = require('path'),
 	nconf = module.parent.require('nconf'),
 	mv = require('mv'),
 	pretty = require('prettysize'),
+	express = module.parent.require('express'),
 
 	db = module.parent.require('./database'),
 	utils = module.parent.require('../public/src/utils'),
@@ -36,6 +37,8 @@ plugin.init = function(params, callback) {
 	router.get('/admin/plugins/asset-manager', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
 	router.get('/api/admin/plugins/asset-manager', controllers.renderAdminPage);
 
+	router.get('/assets', hostMiddleware.buildHeader, controllers.listAssets);
+	router.use('/assets', express.static(plugin.settings.storage));
 	router.post('/asset-manager/upload', middlewares, controllers.handleUpload);
 
 	// Create storage directory if not already created
@@ -57,16 +60,6 @@ plugin.init = function(params, callback) {
 	});
 
 	callback();
-};
-
-plugin.addAdminNavigation = function(header, callback) {
-	header.plugins.push({
-		route: '/plugins/asset-manager',
-		icon: 'fa-tint',
-		name: 'Asset Manager'
-	});
-
-	callback(null, header);
 };
 
 plugin.list = function(callback) {
@@ -126,11 +119,14 @@ plugin.processUpload = function(files, callback) {
 			},
 			function(next) {
 				// Save meta data into database
+				console.log(fileObj);
 				db.setObject('asset-manager:file:' + uuid, {
 					name: fileObj.meta.name,
 					description: fileObj.meta.description,
 					path: targetPath,
-					size: fileObj.size
+					size: fileObj.size,
+					fileName: fileObj.originalFilename,
+					type: fileObj.type
 				}, next);
 			}
 		], function(err) {
@@ -142,6 +138,31 @@ plugin.processUpload = function(files, callback) {
 			plugin.get(uuids, callback);
 		});
 	});
+};
+
+plugin.addAdminNavigation = function(header, callback) {
+	header.plugins.push({
+		route: '/plugins/asset-manager',
+		icon: 'fa-tint',
+		name: 'Asset Manager'
+	});
+
+	callback(null, header);
+};
+
+plugin.addNavigation = function(menu, callback) {
+	menu = menu.concat(
+		[
+			{
+				"route": "/assets",
+				"title": "Assets",
+				"iconClass": "fa-file",
+				"text": "Files made available for download"
+			}
+		]
+	);
+
+	callback (null, menu);
 };
 
 module.exports = plugin;
