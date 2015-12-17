@@ -1,11 +1,11 @@
 {
-  "name": "nodebb-plugin-quickstart",
+  "name": "nodebb-plugin-asset-manager",
   "version": "0.0.0",
-  "description": "",
+  "description": "Simple file serving and asset management for your NodeBB users",
   "main": "library.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/julianlam/nodebb-plugin-quickstart"
+    "url": "https://github.com/NodeBB/nodebb-plugin-asset-manager"
   },
   "keywords": [
     "nodebb",
@@ -17,10 +17,13 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/julianlam/nodebb-plugin-quickstart/issues"
+    "url": "https://github.com/NodeBB/nodebb-plugin-asset-manager/issues"
   },
   "readmeFilename": "README.md",
   "nbbpm": {
-    "compatibility": "^0.6.0 || ^0.7.0 || ^0.8.0"
+    "compatibility": "^0.9.0"
+  },
+  "dependencies": {
+    "mv": "^2.1.1"
   }
 }

@@ -1,19 +1,15 @@
 {
-	"id": "nodebb-plugin-quickstart",
-	"url": "https://github.com/NodeBB/nodebb-plugin-quickstart",
+	"id": "nodebb-plugin-asset-manager",
+	"url": "https://github.com/NodeBB/nodebb-plugin-asset-manager",
 	"library": "./library.js",
 	"hooks": [
 		{ "hook": "static:app.load", "method": "init" },
 		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" }
 	],
-	"staticDirs": {
-		"static": "./static"
-	},
 	"less": [
 		"static/style.less"
 	],
 	"scripts": [
-		"static/lib/main.js",
 		"static/lib/admin.js"
 	],
 	"templates": "static/templates"
