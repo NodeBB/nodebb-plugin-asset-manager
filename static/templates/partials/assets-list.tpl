@@ -1,10 +1,3 @@
-<h2>Assets</h2>
-<p class="lead">
-	These files have been uploaded by the site administrator for you to download.
-</p>
-
-<hr />
-
 <!-- BEGIN files -->
 <div class="media" data-uuid="{../uuid}">
 	<div class="media-left">
