@@ -24,6 +24,7 @@
     "compatibility": "^0.9.0"
   },
   "dependencies": {
-    "mv": "^2.1.1"
+    "mv": "^2.1.1",
+    "prettysize": "0.0.3"
   }
 }

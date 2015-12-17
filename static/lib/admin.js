@@ -1,7 +1,7 @@
 'use strict';
 /* globals $, app, socket */
 
-define('admin/plugins/asset-manager', ['settings', 'uploader', 'csrf'], function(Settings, uploader, csrf) {
+define('admin/plugins/asset-manager', ['settings', 'uploader', 'csrf', 'components'], function(Settings, uploader, csrf, components) {
 
 	var ACP = {};
 
@@ -31,15 +31,41 @@ define('admin/plugins/asset-manager', ['settings', 'uploader', 'csrf'], function
 				clearForm: true,
 
 				error: function(err) {
-					app.alertError('error!', err.message);
+					app.alertError(err.message);
 				},
 
-				success: function() {
-					app.alertSuccess('success');
-					console.log(arguments);
+				success: function(data) {
+					app.alertSuccess('File uploaded');
+					templates.parse('admin/partials/asset-manager-list', data, function(html) {
+						components.get('asset-manager/nofiles').remove();
+						components.get('asset-manager/files').append(html);
+					});
 				}
 			});
 		});
+
+		components.get('asset-manager/files')
+			.on('click', '[data-action="delete"]', function() {
+				var parentEl = $(this).parents('div[data-uuid]'),
+					uuid = parentEl.attr('data-uuid');
+
+				bootbox.confirm('Are you sure you want to delete this file?', function(ok) {
+					if (ok) {
+						socket.emit('plugins.asset-manager.delete', {
+							uuid: uuid
+						}, function(err) {
+							if (err) {
+								return app.alertError(err.message);
+							}
+
+							parentEl.remove();
+							if (!components.get('asset-manager/files').find('div').length) {
+								ajaxify.refresh();
+							}
+						});
+					}
+				});
+			});
 	};
 
 	return ACP;

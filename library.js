@@ -6,6 +6,7 @@ var path = require('path'),
 	winston = module.parent.require('winston'),
 	nconf = module.parent.require('nconf'),
 	mv = require('mv'),
+	pretty = require('prettysize'),
 
 	db = module.parent.require('./database'),
 	utils = module.parent.require('../public/src/utils'),
@@ -26,6 +27,11 @@ plugin.init = function(params, callback) {
 	var multipart = module.parent.require('connect-multiparty');
 	var multipartMiddleware = multipart();
 	var middlewares = [multipartMiddleware, hostMiddleware.validateFiles, hostMiddleware.applyCSRF];
+
+	// Websockets
+	var SocketPlugins = require.main.require('./src/socket.io/plugins'),
+		SocketMethods = require('./websockets');
+	SocketPlugins['asset-manager'] = SocketMethods;
 		
 	router.get('/admin/plugins/asset-manager', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
 	router.get('/api/admin/plugins/asset-manager', controllers.renderAdminPage);
@@ -63,6 +69,13 @@ plugin.addAdminNavigation = function(header, callback) {
 	callback(null, header);
 };
 
+plugin.list = function(callback) {
+	async.waterfall([
+		async.apply(db.getSortedSetRange, 'asset-manager:assets', 0, -1),
+		async.apply(plugin.get)
+	], callback);
+};
+
 plugin.get = function(uuids, callback) {
 	if (!Array.isArray(uuids)) {
 		uuids = [uuids];
@@ -72,7 +85,26 @@ plugin.get = function(uuids, callback) {
 		return 'asset-manager:file:' + uuid;
 	});
 
-	db.getObjects(keys, callback);
+	async.waterfall([
+		async.apply(db.getObjects, keys),
+		function(files, next) {
+			next(null, files.map(function(file, idx) {
+				file.uuid = uuids[idx];
+				file.prettySize = pretty(parseInt(file.size, 10));
+				return file;
+			}));
+		}
+	], callback);
+};
+
+plugin.remove = function(uuid, callback) {
+	db.getObjectField('asset-manager:file:' + uuid, 'path', function(err, path) {
+		async.series([
+			async.apply(db.sortedSetRemove, 'asset-manager:assets', uuid),
+			async.apply(db.delete, 'asset-manager:file:' + uuid),
+			async.apply(fs.unlink, path)
+		], callback);
+	});
 };
 
 plugin.processUpload = function(files, callback) {

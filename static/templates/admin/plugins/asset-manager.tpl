@@ -1,4 +1,21 @@
 <div class="row">
+	<div class="col-sm-2 col-xs-12 settings-header">Managed Files</div>
+	<div class="col-sm-10 col-xs-12">
+		<div class="panel panel-default">
+			<div class="panel-body" component="asset-manager/files">
+			<!-- IF files.length -->
+			<!-- IMPORT admin/partials/asset-manager-list.tpl -->
+			<!-- ELSE -->
+			<div class="alert alert-info text-center" component="asset-manager/nofiles">
+				Not currently managing any files
+			</div>
+			<!-- ENDIF files.length -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
 	<div class="col-sm-2 col-xs-12 settings-header">Upload File</div>
 	<div class="col-sm-10 col-xs-12">
 		<form class="panel panel-default" role="form" method="post" action="{config.relative_path}/asset-manager/upload">
