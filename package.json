@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-asset-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple file serving and asset management for your NodeBB users",
   "main": "library.js",
   "repository": {
