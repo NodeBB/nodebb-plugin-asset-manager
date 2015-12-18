@@ -38,6 +38,8 @@ plugin.init = function(params, callback) {
 	router.get('/api/admin/plugins/asset-manager', controllers.renderAdminPage);
 
 	router.get('/assets', hostMiddleware.buildHeader, controllers.listAssets);
+	router.get('/api/assets', controllers.listAssets);
+
 	router.use('/assets', express.static(plugin.settings.storage));
 	router.post('/asset-manager/upload', middlewares, controllers.handleUpload);
 
