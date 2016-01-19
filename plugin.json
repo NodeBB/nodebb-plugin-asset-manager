@@ -10,7 +10,7 @@
 	"less": [
 		"static/style.less"
 	],
-	"scripts": [
+	"acpScripts": [
 		"static/lib/admin.js"
 	],
 	"templates": "static/templates"
