@@ -9,7 +9,7 @@ var mv = require('mv');
 var pretty = require('prettysize');
 var express = require.main.require('express');
 
-var db = require.main.require('./src.database');
+var db = require.main.require('./src/database');
 var utils = require.main.require('./src/utils');
 
 var plugin = {
