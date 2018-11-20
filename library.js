@@ -1,37 +1,37 @@
 "use strict";
 
-var path = require('path'),
-	fs = require('fs'),
-	async = module.parent.require('async'),
-	winston = module.parent.require('winston'),
-	nconf = module.parent.require('nconf'),
-	mv = require('mv'),
-	pretty = require('prettysize'),
-	express = module.parent.require('express'),
+var path = require('path');
+var fs = require('fs');
+var async = require.main.require('async');
+var winston = require.main.require('winston');
+var nconf = require.main.require('nconf');
+var mv = require('mv');
+var pretty = require('prettysize');
+var express = require.main.require('express');
 
-	db = module.parent.require('./database'),
-	utils = module.parent.require('../public/src/utils'),
+var db = require.main.require('./src.database');
+var utils = require.main.require('./src/utils');
 
-	plugin = {
-		ready: false,
-		settings: {
-			storage: path.join(nconf.get('base_dir'), nconf.get('upload_path'), 'asset-manager')
-		}
-	};
+var plugin = {
+	ready: false,
+	settings: {
+		storage: path.join(nconf.get('base_dir'), nconf.get('upload_path'), 'asset-manager')
+	}
+};
 
 plugin.init = function(params, callback) {
-	var router = params.router,
-		hostMiddleware = params.middleware,
-		hostControllers = params.controllers,
-		controllers = require('./lib/controllers');
+	var router = params.router;
+	var hostMiddleware = params.middleware;
+	var hostControllers = params.controllers;
+	var controllers = require('./lib/controllers');
 
-	var multipart = module.parent.require('connect-multiparty');
+	var multipart = require.main.require('connect-multiparty');
 	var multipartMiddleware = multipart();
 	var middlewares = [multipartMiddleware, hostMiddleware.validateFiles, hostMiddleware.applyCSRF];
 
 	// Websockets
-	var SocketPlugins = require.main.require('./src/socket.io/plugins'),
-		SocketMethods = require('./websockets');
+	var SocketPlugins = require.main.require('./src/socket.io/plugins');
+	var SocketMethods = require('./websockets');
 	SocketPlugins['asset-manager'] = SocketMethods;
 		
 	router.get('/admin/plugins/asset-manager', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
