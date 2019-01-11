@@ -1,7 +1,7 @@
 'use strict';
 /* globals $, app, socket */
 
-define('admin/plugins/asset-manager', ['settings', 'uploader', 'csrf', 'components'], function(Settings, uploader, csrf, components) {
+define('admin/plugins/asset-manager', ['settings', 'uploader', 'components'], function(Settings, uploader, components) {
 
 	var ACP = {};
 
@@ -25,7 +25,7 @@ define('admin/plugins/asset-manager', ['settings', 'uploader', 'csrf', 'componen
 		$('button[data-action="upload"]').on('click', function() {
 			$(this).parents('form').ajaxSubmit({
 				headers: {
-					'x-csrf-token': csrf.get()
+					'x-csrf-token': config.csrf_token
 				},
 				resetForm: true,
 				clearForm: true,
